@@ -1,0 +1,56 @@
+name: custom_file
+on: 
+  pull_request:
+    branches:
+      - master
+  push: 
+    branches:
+      - master
+
+  workflow_dispatch: 
+
+permissions: 
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    permissions: 
+      contents: read
+      security-events: write
+      actions: read
+    runs-on: ubuntu_latest
+    steps: 
+      - name: checkout 
+        uses: actions/checkout@v2
+      - name: create directory
+        run: mkdir ${{ github.workspace }}/output_fold
+      - name: change directory owner
+        run:  sudo chown -R 1000:1000 ${{ github.workspace }}
+      - name: Checkmarx DAST Github Action
+  # You may pin to the exact commit or the version.
+  # uses: Checkmarx/dast-github-action@950df92f6e10176062726fb5b806723a7ad5d602
+        uses: Checkmarx/dast-github-action@v2.3.0
+        with:
+          # The type of scan to preform (web, api)
+          command: web
+          # The path to the ZAP configuration file
+          config: ./gin_juice.yaml
+          # The baseURL for the Checkmarx One Servers
+          base_url: https://ind.ast.checkmarx.net
+          # The environment ID previously created in the Frontend
+          environment_id: bd462e37-c712-440a-9e0c-7984b09d5252
+      - name: Reclaim output directory
+        if: always()
+        run: sudo chown -R 1001:1001 ${{ github.workspace }}/output_fold
+      - uses: actions/upload-artifact@v3
+        if: always()
+        name: Upload Logs
+        with:
+          name: report
+          path: ${{ github.workspace }}/output_fold
+              
+              
