@@ -43,6 +43,7 @@ jobs:
           base_url: https://ind.ast.checkmarx.net
           # The environment ID previously created in the Frontend
           environment_id: bd462e37-c712-440a-9e0c-7984b09d5252
+          output: ${{ github.workspace }}/output_fold #./output
       - name: Reclaim output directory
         if: always()
         run: sudo chown -R 1001:1001 ${{ github.workspace }}/output_fold
