@@ -22,7 +22,7 @@ jobs:
       contents: read
       security-events: write
       actions: read
-    runs-on: ubuntu_latest
+    runs-on: ubuntu-latest
     steps: 
       - name: checkout 
         uses: actions/checkout@v2
