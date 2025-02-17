@@ -17,7 +17,8 @@ jobs:
           project_name: NodeGoatcopy
           cx_tenant: ast_abdul_ansari
           base_uri: https://eu.ast.checkmarx.net
-          cx_client_id: Gitactions_P
-          cx_client_secret:  KbqZQbBi7bPDyI0vtLLkv58xysN2wLrc
+          cx_client_id: test_Gitactions
+          cx_client_secret: MQuKrCpAvGtHLZ9JoZoqiA7OdQUYch7D
+
 
     
