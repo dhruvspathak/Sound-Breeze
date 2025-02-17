@@ -19,7 +19,7 @@ jobs:
           base_uri: https://eu.ast.checkmarx.net
           cx_client_id: test_Gitactions
           cx_client_secret: MQuKrCpAvGtHLZ9JoZoqiA7OdQUYch7D
-          additional_params: --scan-types sast,sca --preset-name "Checkmarx Default"
+          additional_params: --scan-types sast,sca  preset-name "Checkmarx Default"
           threshold: "sast-high=35; sast-medium=35; sca-high=35"
                 
 
