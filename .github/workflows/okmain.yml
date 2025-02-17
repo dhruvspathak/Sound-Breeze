@@ -12,13 +12,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Checkmarx One CLI Action
-        uses: checkmarx/ast-github-action@main #Github Action version
+        uses: checkmarx/ast-github-action@main # Github Action version
         with:
           project_name: NodeGoatcopy
           cx_tenant: ast_abdul_ansari
           base_uri: https://eu.ast.checkmarx.net
           cx_client_id: test_Gitactions
           cx_client_secret: MQuKrCpAvGtHLZ9JoZoqiA7OdQUYch7D
+          additional_params: --scan-types sast,sca --preset-name "Checkmarx Default"
+          threshold: "sast-high=35; sast-medium=35; sca-high=35"
+                
 
 
     
