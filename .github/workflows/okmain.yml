@@ -1,10 +1,8 @@
 name: Checkmarx One Scan
 on:
-  push:
+  pull:
     branches:
-      - main
       - master
-      - dev
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,16 +10,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Checkmarx One CLI Action
-        uses: checkmarx/ast-github-action@main # Github Action version
+        uses: checkmarx/ast-github-action@main #Github Action version
         with:
-          
-          cx_tenant: ast_abdul_ansari
-          base_uri: https://eu.ast.checkmarx.net
-          cx_client_id: test_Gitactions
-          cx_client_secret: MQuKrCpAvGtHLZ9JoZoqiA7OdQUYch7D
-          additional_params: --scan-types sast,sca  preset-name "Checkmarx Default"
-          threshold: "sast-high=35; sast-medium=35; sca-high=35"
-                
-
-
-    
+          CX_APIKEY: ${{ secrets.CX_APIKEY }}
+sca_scan:
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
+      - name: Run SCA Scan
+        uses: checkmarx/ast-github-action@main
+        with:
+          CX_APIKEY: ${{ secrets.CX_APIKEY }}
+          additional_params: --scan-types sca --threshold "sca-critical=35"
+sast_scan:
+    runs-on: ubuntu-latest
+    needs: sca_scan
+    steps:
+      - name: Run SAST Scan
+        uses: checkmarx/ast-github-action@main
+        with:
+          CX_APIKEY: ${{ secrets.CX_APIKEY }}
+          additional_params: --scan-types sast --threshold "sast-critical=35"
