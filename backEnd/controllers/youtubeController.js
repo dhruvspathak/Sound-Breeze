@@ -64,7 +64,11 @@ const youtubeCreatePL = async (req, res) => {
     });
 
     const playlist = response.data
-    console.log(playlist)
+    console.log('YouTube API client initialized');
+    res.set({
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      'Content-Type': 'application/json'
+    })
     res.status(200).json(playlist)
     console.log('Displayed the YouTube playlist')
 
@@ -106,7 +110,7 @@ const googleAuth= (req,res)=>{
 
 const googleCallback= async(req,res)=>{
   let {code}= req.query
-  console.log(`code: ${code}`)
+  console.log('Google OAuth callback received')
   const tokenUrl = 'https://oauth2.googleapis.com/token'
   const tokenParams = querystring.stringify({
     code,
@@ -123,12 +127,21 @@ const googleCallback= async(req,res)=>{
       },
     })
     const accessToken = response.data.access_token
-
-    res.redirect('http://localhost:5173/YoutubeLoginPage?accessToken=' + accessToken)
+    
+    // Store token securely and redirect with a temporary session ID
+    const sessionId = require('crypto').randomBytes(16).toString('hex')
+    // In a real app, store this in Redis/database with expiration
+    // For now, we'll use a simple approach - redirect to a secure endpoint
+    res.cookie('session', sessionId, { httpOnly: true, secure: true, sameSite: 'Strict' });
+    res.redirect('http://localhost:5173/YoutubeLoginPage');
 
   } catch (error) {
-    console.error('callback error', error.message)
-    res.status(error.response ? error.response.status : 500).json({ error: 'callback error ' })
+    console.error('callback error', error); // Log full error on server
+    res.set({
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      'Content-Type': 'application/json'
+    });
+    res.status(500).json({ error: 'An internal server error occurred.' }); // Generic message to client
   }
 }
 

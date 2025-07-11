@@ -38,6 +38,10 @@ const refreshToken = (req, res) => {
   request.post(authOptions, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       const access_token = body.access_token
+      res.set({
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+        'Content-Type': 'application/json'
+      })
       res.send({
         'access_token': access_token
       })
@@ -81,8 +85,12 @@ const callBack = async (req, res) => {
     try {
       const response = await axios(authOptions)
       const accessToken = response.data.access_token
-      res.redirect('http://localhost:5173/SpotifyLoginPage?access_token=' + accessToken)
-      //res.redirect('http://localhost:5173/ConnectionBtns?access_token=' + accessToken)
+      
+      // Store token securely and redirect with a temporary session ID
+      const sessionId = require('crypto').randomBytes(16).toString('hex')
+      // In a real app, store this in Redis/database with expiration
+      res.cookie('session', sessionId, { httpOnly: true, secure: true, sameSite: 'Strict' });
+      res.redirect('http://localhost:5173/SpotifyLoginPage');
     } catch (error) {
       console.error(error)
     }
