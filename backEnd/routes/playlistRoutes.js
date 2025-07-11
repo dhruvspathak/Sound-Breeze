@@ -9,6 +9,11 @@ router.get('/refresh-token', spotifyController.refreshToken)
 
 router.get('/getPlaylists', (req, res) => {
     const accessToken = req.headers.authorization.split(' ')[1]
+    res.set({
+      'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';",
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      'Content-Type': 'application/json'
+    })
     spotifyController.getPlaylists(accessToken).then((playlists) => res.json(playlists))
   })
 router.get('/getPlaylistSongs/:playlistId', (req, res) => {
